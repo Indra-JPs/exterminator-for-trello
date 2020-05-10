@@ -8,6 +8,6 @@ prompt([
         name: 'milestone',
         message: 'Qual a milestone deseja exportar?'
     }
-]).then(respotas => {
+]).then((respotas) => {
     console.log(respotas);
-})
+});
