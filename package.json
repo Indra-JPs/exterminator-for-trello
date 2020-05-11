@@ -19,13 +19,20 @@
   "homepage": "https://github.com/Indra-JPs/exterminator-for-trello#readme",
   "dependencies": {
     "inquirer": "^7.1.0",
-    "node-excel-export": "^1.4.4"
+    "mock-browser": "^0.92.14",
+    "node-excel-export": "^1.4.4",
+    "node-xlsx": "^0.15.0",
+    "FileReader": "^0.10.2",
+    "bufferjs": "1.0.0"
   },
   "devDependencies": {
-    "eslint": "^7.0.0",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-promise": "^4.2.1"
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^2.5.1"
   }
 }
