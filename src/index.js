@@ -19,20 +19,25 @@ const axiosInstance = axios.create({
 
 const prompt = inquirer.createPromptModule();
 
-prompt([
-    {
-        type: 'input',
-        name: 'milestone',
-        message: 'Qual a milestone deseja exportar?'
-    }
-]).then(async respostas => {
-    const totalTime = await getDados(process.env.PATH_ISSUES_MILESTONE + respostas.milestone);
+async function calcularTempo(data) {
+    let total = 0;
 
-    console.log('Total de tempo gasto com a ' + respostas.milestone + ': ' + totalTime + 'h.');
-});
+    data.forEach((d) => {
+        total += d.time_stats.total_time_spent;
+    });
+
+    return total;
+}
+
+async function converterSegundosParaHoras(segundos) {
+    const horas = Math.floor(segundos / 3600);
+
+    return horas;
+}
 
 async function getDados(path) {
-    const dados = await axiosInstance.get(process.env.PATH_BASE + path, header).then((response) => response.data);
+    const dados = await axiosInstance.get(process.env.PATH_BASE + path, header)
+        .then((response) => response.data);
 
     let tempoTotal = await calcularTempo(dados);
 
@@ -41,18 +46,14 @@ async function getDados(path) {
     return tempoTotal;
 }
 
-async function calcularTempo(data) {
-    let total = 0;
+prompt([
+    {
+        type: 'input',
+        name: 'milestone',
+        message: 'Qual a milestone deseja exportar?'
+    }
+]).then(async (respostas) => {
+    const totalTime = await getDados(process.env.PATH_ISSUES_MILESTONE + respostas.milestone);
 
-    data.forEach(d => {
-        total = total + d.time_stats.total_time_spent;
-    });
-
-    return total;
-}
-
-async function converterSegundosParaHoras(segundos) {
-    let horas = Math.floor(segundos / 3600);
-
-    return horas;
-}
+    console.log(`Total de tempo gasto com a ${respostas.milestone}: ${totalTime}h.`);
+});
