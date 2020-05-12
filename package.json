@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/Indra-JPs/exterminator-for-trello#readme",
   "dependencies": {
-    "inquirer": "^7.1.0"
+    "inquirer": "^7.1.0",
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "http": "0.0.1-security"
   },
   "devDependencies": {
     "eslint": "^7.0.0",
