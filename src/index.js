@@ -1,10 +1,7 @@
 const inquirer = require('inquirer');
-// const excel = require('node-excel-export');
-const fs = require('fs');
-
-
 
 const prompt = inquirer.createPromptModule();
+const excelManager = require('./excel-manage');
 
 prompt([
     {
@@ -15,27 +12,39 @@ prompt([
 ]).then((respotas) => {
     console.log(respotas);
 
-    let repostaMocha = {
-        sprint: 'Sprint 1',
+    const repostaMocha = {
+        sprint: respotas.milestone,
         IssuesQd: 3,
-        Issues:{
-            Issue1:{
-                title:'Resolver problemas de Layout da tela brbc389',
+        Issues: [
+            {
+                title: 'Resolver problemas de Layout da tela brbc389',
                 id: 1,
-                estimated: '2hrs'
+                estimated: '24hrs',
+                spent: '15hrs',
+                status: 'staging',
+                author: 'Rodrigo Gonçalves',
+                labels: 'staging, Review, Rework'
             },
-            Issue2:{
-                title:'Resolver problemas de Layout da tela brbc389',
-                id: 1,
-                estimated: '2hrs'
+            {
+                title: 'Resolver problemas de Layout e de fluxo da tela brpe937',
+                id: 2,
+                estimated: '8hrs',
+                spent: '7hrs',
+                status: 'Review',
+                author: 'Paulo',
+                labels: 'Review, Rework'
             },
-
-        }
+            {
+                title: 'Resolver problemas de Layout e de fluxo da tela brpe459',
+                id: 3,
+                estimated: '16hrs',
+                spent: '15hrs',
+                status: 'doing',
+                author: 'Cobol',
+                labels: 'doing, Rework'
+            }
+        ]
     };
 
-    fs.appendFile(`${repostaMocha.sprint}.xls`, 'data to append', (err) => {
-        if (err) throw err;
-        console.log('The "data to append" was appended to file!');
-      });
+    excelManager(repostaMocha);
 });
-
