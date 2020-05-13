@@ -54,7 +54,6 @@ prompt([
         message: 'Qual a milestone deseja exportar?'
     }
 ]).then(async (respostas) => {
-  
     const totalDesenvDesc = `${respostas.milestone}-desenv`;
     const totalQADesc = `${respostas.milestone}-qa`;
     const totalReworkDesc = `${respostas.milestone}-rework`;
@@ -94,7 +93,7 @@ prompt([
     };
 
     excelManager(repostaMocha);
-  
+
     const totalTimeDesenv = await getDados(process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc);
     const totalTimeQA = await getDados(process.env.PATH_ISSUES_MILESTONE + totalQADesc);
     const totalTimeRework = await getDados(process.env.PATH_ISSUES_MILESTONE + totalReworkDesc);
