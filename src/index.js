@@ -53,11 +53,11 @@ prompt([
         name: 'milestone',
         message: 'Qual a milestone deseja exportar?'
     }
-]).then((respotas) => {
-    console.log(respotas);
+]).then(async (respostas) => {
+    console.log(respostas);
 
     const repostaMocha = {
-        sprint: respotas.milestone,
+        sprint: respostas.milestone,
         IssuesQd: 3,
         Issues: [
             {
@@ -91,7 +91,7 @@ prompt([
     };
 
     excelManager(repostaMocha);
-]).then(async (respostas) => {
+
     const totalTime = await getDados(process.env.PATH_ISSUES_MILESTONE + respostas.milestone);
 
     console.log(`Total de tempo gasto com a ${respostas.milestone}: ${totalTime}h.`);
