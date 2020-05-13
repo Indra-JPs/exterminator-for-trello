@@ -18,6 +18,7 @@ const axiosInstance = axios.create({
 });
 
 const prompt = inquirer.createPromptModule();
+const excelManager = require('./excel-manage');
 
 async function calcularTempo(data) {
     let total = 0;
@@ -53,10 +54,47 @@ prompt([
         message: 'Qual a milestone deseja exportar?'
     }
 ]).then(async (respostas) => {
+  
     const totalDesenvDesc = `${respostas.milestone}-desenv`;
     const totalQADesc = `${respostas.milestone}-qa`;
     const totalReworkDesc = `${respostas.milestone}-rework`;
 
+    const repostaMocha = {
+        sprint: respostas.milestone,
+        IssuesQd: 3,
+        Issues: [
+            {
+                title: 'Resolver problemas de Layout da tela brbc389',
+                id: 1,
+                estimated: '24hrs',
+                spent: '15hrs',
+                status: 'staging',
+                author: 'Rodrigo Gonçalves',
+                labels: 'staging, Review, Rework'
+            },
+            {
+                title: 'Resolver problemas de Layout e de fluxo da tela brpe937',
+                id: 2,
+                estimated: '8hrs',
+                spent: '7hrs',
+                status: 'Review',
+                author: 'Paulo',
+                labels: 'Review, Rework'
+            },
+            {
+                title: 'Resolver problemas de Layout e de fluxo da tela brpe459',
+                id: 3,
+                estimated: '16hrs',
+                spent: '15hrs',
+                status: 'doing',
+                author: 'Cobol',
+                labels: 'doing, Rework'
+            }
+        ]
+    };
+
+    excelManager(repostaMocha);
+  
     const totalTimeDesenv = await getDados(process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc);
     const totalTimeQA = await getDados(process.env.PATH_ISSUES_MILESTONE + totalQADesc);
     const totalTimeRework = await getDados(process.env.PATH_ISSUES_MILESTONE + totalReworkDesc);
