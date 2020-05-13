@@ -53,7 +53,15 @@ prompt([
         message: 'Qual a milestone deseja exportar?'
     }
 ]).then(async (respostas) => {
-    const totalTime = await getDados(process.env.PATH_ISSUES_MILESTONE + respostas.milestone);
+    const totalDesenvDesc = `${respostas.milestone}-desenv`;
+    const totalQADesc = `${respostas.milestone}-qa`;
+    const totalReworkDesc = `${respostas.milestone}-rework`;
 
-    console.log(`Total de tempo gasto com a ${respostas.milestone}: ${totalTime}h.`);
+    const totalTimeDesenv = await getDados(process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc);
+    const totalTimeQA = await getDados(process.env.PATH_ISSUES_MILESTONE + totalQADesc);
+    const totalTimeRework = await getDados(process.env.PATH_ISSUES_MILESTONE + totalReworkDesc);
+
+    console.log(`Total de tempo gasto com a ${totalDesenvDesc}: ${totalTimeDesenv}h.`);
+    console.log(`Total de tempo gasto com a ${totalQADesc}: ${totalTimeQA}h.`);
+    console.log(`Total de tempo gasto com a ${totalReworkDesc}: ${totalTimeRework}h.`);
 });
