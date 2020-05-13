@@ -25,7 +25,7 @@
     "mock-browser": "^0.92.14",
     "node-excel-export": "^1.4.4",
     "node-xlsx": "^0.15.0",
-    "read-excel-file": "^4.0.6"
+    "read-excel-file": "^4.0.6",
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
     "http": "0.0.1-security"
