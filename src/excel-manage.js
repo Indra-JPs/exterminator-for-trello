@@ -2,7 +2,7 @@ const Excel = require('exceljs');
 
 module.exports = async function excelManager(repostaMocha) {
     const workbook = new Excel.Workbook();
-    const worksheet = workbook.addWorksheet(`Sprint ${repostaMocha.sprint}`);
+    const worksheet = workbook.addWorksheet(`../Sprint ${repostaMocha.sprint}`);
     console.log(repostaMocha.sprint);
 
     worksheet.columns = [
@@ -31,6 +31,6 @@ module.exports = async function excelManager(repostaMocha) {
             }
         );
     });
-    await workbook.xlsx.writeFile(`Sprint-${repostaMocha.sprint}.xlsx`);
+    await workbook.xlsx.writeFile(`../Sprint-${repostaMocha.sprint}.xlsx`);
     console.log('File is written');
 };
