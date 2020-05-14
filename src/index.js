@@ -58,47 +58,37 @@ prompt([
     const totalQADesc = `${respostas.milestone}-qa`;
     const totalReworkDesc = `${respostas.milestone}-rework`;
 
+    const totalTimeDesenv = await getDados(process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc);
+    const totalTimeQA = await getDados(process.env.PATH_ISSUES_MILESTONE + totalQADesc);
+    const totalTimeRework = await getDados(process.env.PATH_ISSUES_MILESTONE + totalReworkDesc);
+    const totalGeral = totalTimeDesenv + totalTimeQA + totalTimeRework;
+
     const repostaMocha = {
         sprint: respostas.milestone,
-        IssuesQd: 3,
-        Issues: [
+        Milestones: [
             {
-                title: 'Resolver problemas de Layout da tela brbc389',
-                id: 1,
-                estimated: '24hrs',
-                spent: '15hrs',
-                status: 'staging',
-                author: 'Rodrigo Gonçalves',
-                labels: 'staging, Review, Rework'
+                title: 'Desenvolvimento',
+                value: totalTimeDesenv
             },
             {
-                title: 'Resolver problemas de Layout e de fluxo da tela brpe937',
-                id: 2,
-                estimated: '8hrs',
-                spent: '7hrs',
-                status: 'Review',
-                author: 'Paulo',
-                labels: 'Review, Rework'
+                title: 'Testes',
+                value: totalTimeQA
             },
             {
-                title: 'Resolver problemas de Layout e de fluxo da tela brpe459',
-                id: 3,
-                estimated: '16hrs',
-                spent: '15hrs',
-                status: 'doing',
-                author: 'Cobol',
-                labels: 'doing, Rework'
+                title: 'Retrabalho',
+                value: totalTimeRework
+            },
+            {
+                title: 'Total',
+                value: totalGeral
             }
         ]
     };
 
     excelManager(repostaMocha);
 
-    const totalTimeDesenv = await getDados(process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc);
-    const totalTimeQA = await getDados(process.env.PATH_ISSUES_MILESTONE + totalQADesc);
-    const totalTimeRework = await getDados(process.env.PATH_ISSUES_MILESTONE + totalReworkDesc);
-
-    console.log(`Total de tempo gasto com a ${totalDesenvDesc}: ${totalTimeDesenv}h.`);
-    console.log(`Total de tempo gasto com a ${totalQADesc}: ${totalTimeQA}h.`);
-    console.log(`Total de tempo gasto com a ${totalReworkDesc}: ${totalTimeRework}h.`);
+    console.log(`Total de tempo gasto com Desenvolvimento: ${totalTimeDesenv}h.`);
+    console.log(`Total de tempo gasto com Testes: ${totalTimeQA}h.`);
+    console.log(`Total de tempo gasto com Retrabalho: ${totalTimeRework}h.`);
+    console.log(`Total Geral: ${totalGeral}h`);
 });
