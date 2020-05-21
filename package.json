@@ -19,16 +19,17 @@
   "homepage": "https://github.com/Indra-JPs/exterminator-for-trello#readme",
   "dependencies": {
     "FileReader": "^0.10.2",
+    "axios": "^0.19.2",
     "bufferjs": "1.0.0",
+    "dotenv": "^8.2.0",
     "exceljs": "^3.9.0",
+    "http": "0.0.1-security",
     "inquirer": "^7.1.0",
     "mock-browser": "^0.92.14",
     "node-excel-export": "^1.4.4",
     "node-xlsx": "^0.15.0",
-    "read-excel-file": "^4.0.6",
-    "axios": "^0.19.2",
-    "dotenv": "^8.2.0",
-    "http": "0.0.1-security"
+    "nodemailer": "^6.4.6",
+    "read-excel-file": "^4.0.6"
   },
   "devDependencies": {
     "eslint": "^5.16.0",

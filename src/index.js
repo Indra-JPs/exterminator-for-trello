@@ -19,6 +19,7 @@ const axiosInstance = axios.create({
 
 const prompt = inquirer.createPromptModule();
 const excelManager = require('./excel-manage');
+const enviarEmail = require('./email-manage');
 
 async function calcularTempo(data) {
     let total = 0;
@@ -37,7 +38,8 @@ async function converterSegundosParaHoras(segundos) {
 }
 
 async function getDados(path) {
-    const dados = await axiosInstance.get(process.env.PATH_BASE + path, header)
+    const dados = await axiosInstance
+        .get(process.env.PATH_BASE + path + process.env.PATH_PAGINATION, header)
         .then((response) => response.data);
 
     let tempoTotal = await calcularTempo(dados);
@@ -58,8 +60,10 @@ prompt([
     const totalQADesc = `${respostas.milestone}-qa`;
     const totalReworkDesc = `${respostas.milestone}-rework`;
 
+    console.log('\nExtraindo informações do Gitlab...');
+
     const totalTimeDesenv = await getDados(process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc);
-    const totalTimeQA = await getDados(process.env.PATH_ISSUES_MILESTONE + totalQADesc);
+    const totalTimeQA = await getDados(process.env.PATH_MR_MILESTONE + totalQADesc);
     const totalTimeRework = await getDados(process.env.PATH_ISSUES_MILESTONE + totalReworkDesc);
     const totalGeral = totalTimeDesenv + totalTimeQA + totalTimeRework;
 
@@ -85,10 +89,20 @@ prompt([
         ]
     };
 
-    excelManager(repostaMocha);
+    console.log('Informações extraídas.');
 
-    console.log(`Total de tempo gasto com Desenvolvimento: ${totalTimeDesenv}h.`);
-    console.log(`Total de tempo gasto com Testes: ${totalTimeQA}h.`);
-    console.log(`Total de tempo gasto com Retrabalho: ${totalTimeRework}h.`);
-    console.log(`Total Geral: ${totalGeral}h`);
+    await excelManager(repostaMocha);
+
+    const mensagemConsole = {
+        desenvolvimento: `Total de tempo gasto com Desenvolvimento: ${totalTimeDesenv}h.`,
+        testes: `Total de tempo gasto com Testes: ${totalTimeQA}h.`,
+        retrabalho: `Total de tempo gasto com Retrabalho: ${totalTimeRework}h.`,
+        geral: `Total Geral: ${totalGeral}h`
+    };
+
+    const mensagemFormatada = `\n${mensagemConsole.desenvolvimento}\n${mensagemConsole.testes}\n${mensagemConsole.retrabalho}\n${mensagemConsole.geral}`;
+
+    console.log(mensagemFormatada);
+
+    await enviarEmail(mensagemFormatada, respostas.milestone);
 });
