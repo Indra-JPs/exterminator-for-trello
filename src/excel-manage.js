@@ -18,6 +18,7 @@ module.exports = async function excelManager(repostaMocha) {
         );
     });
 
+    console.log('\nExportando arquivo...');
     await workbook.xlsx.writeFile(`../${repostaMocha.sprint}.xlsx`);
     console.log('Arquivo XLS exportado.');
 };
