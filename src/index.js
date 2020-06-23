@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const header = {
     headers: {
-        'Private-Token': process.env.TOKEN_GITLAB
+        'Private-Token': process.env.TOKEN_GITLAB || ''
     }
 };
 
@@ -56,53 +56,57 @@ prompt([
         message: 'Qual a milestone deseja exportar?'
     }
 ]).then(async (respostas) => {
-    const totalDesenvDesc = `${respostas.milestone}-desenv`;
-    const totalQADesc = `${respostas.milestone}-qa`;
-    const totalReworkDesc = `${respostas.milestone}-rework`;
+    try {
+        const totalDesenvDesc = `${respostas.milestone}-desenv`;
+        const totalQADesc = `${respostas.milestone}-qa`;
+        const totalReworkDesc = `${respostas.milestone}-rework`;
 
-    console.log('\nExtraindo informações do Gitlab...');
+        console.log('\nExtraindo informações do Gitlab...');
 
-    const totalTimeDesenv = await getDados(process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc);
-    const totalTimeQA = await getDados(process.env.PATH_MR_MILESTONE + totalQADesc);
-    const totalTimeRework = await getDados(process.env.PATH_ISSUES_MILESTONE + totalReworkDesc);
-    const totalGeral = totalTimeDesenv + totalTimeQA + totalTimeRework;
+        const totalTimeDesenv = await getDados(process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc);
+        const totalTimeQA = await getDados(process.env.PATH_MR_MILESTONE + totalQADesc);
+        const totalTimeRework = await getDados(process.env.PATH_ISSUES_MILESTONE + totalReworkDesc);
+        const totalGeral = totalTimeDesenv + totalTimeQA + totalTimeRework;
 
-    const repostaMocha = {
-        sprint: respostas.milestone,
-        Milestones: [
-            {
-                title: 'Desenvolvimento',
-                value: totalTimeDesenv
-            },
-            {
-                title: 'Testes',
-                value: totalTimeQA
-            },
-            {
-                title: 'Retrabalho',
-                value: totalTimeRework
-            },
-            {
-                title: 'Total',
-                value: totalGeral
-            }
-        ]
-    };
+        const repostaMocha = {
+            sprint: respostas.milestone,
+            Milestones: [
+                {
+                    title: 'Desenvolvimento',
+                    value: totalTimeDesenv
+                },
+                {
+                    title: 'Testes',
+                    value: totalTimeQA
+                },
+                {
+                    title: 'Retrabalho',
+                    value: totalTimeRework
+                },
+                {
+                    title: 'Total',
+                    value: totalGeral
+                }
+            ]
+        };
 
-    console.log('Informações extraídas.');
+        console.log('Informações extraídas.');
 
-    await excelManager(repostaMocha);
+        await excelManager(repostaMocha);
 
-    const mensagemConsole = {
-        desenvolvimento: `Total de tempo gasto com Desenvolvimento: ${totalTimeDesenv}h.`,
-        testes: `Total de tempo gasto com Testes: ${totalTimeQA}h.`,
-        retrabalho: `Total de tempo gasto com Retrabalho: ${totalTimeRework}h.`,
-        geral: `Total Geral: ${totalGeral}h`
-    };
+        const mensagemConsole = {
+            desenvolvimento: `Total de tempo gasto com Desenvolvimento: ${totalTimeDesenv}h.`,
+            testes: `Total de tempo gasto com Testes: ${totalTimeQA}h.`,
+            retrabalho: `Total de tempo gasto com Retrabalho: ${totalTimeRework}h.`,
+            geral: `Total Geral: ${totalGeral}h`
+        };
 
-    const mensagemFormatada = `\n${mensagemConsole.desenvolvimento}\n${mensagemConsole.testes}\n${mensagemConsole.retrabalho}\n${mensagemConsole.geral}`;
+        const mensagemFormatada = `\n${mensagemConsole.desenvolvimento}\n${mensagemConsole.testes}\n${mensagemConsole.retrabalho}\n${mensagemConsole.geral}`;
 
-    console.log(mensagemFormatada);
+        console.log(mensagemFormatada);
 
-    await enviarEmail(mensagemFormatada, respostas.milestone);
-});
+        await enviarEmail(mensagemFormatada, respostas.milestone);
+    } catch (error) {
+        console.log(error.code);
+    }
+}).catch((err) => console.log(err));
