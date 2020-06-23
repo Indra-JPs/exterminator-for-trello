@@ -20,6 +20,7 @@ const axiosInstance = axios.create({
 const prompt = inquirer.createPromptModule();
 const excelManager = require('./excel-manage');
 const enviarEmail = require('./email-manage');
+const { throws } = require('assert');
 
 async function calcularTempo(data) {
     let total = 0;
@@ -49,64 +50,77 @@ async function getDados(path) {
     return tempoTotal;
 }
 
-prompt([
-    {
-        type: 'input',
-        name: 'milestone',
-        message: 'Qual a milestone deseja exportar?'
-    }
-]).then(async (respostas) => {
-    try {
-        const totalDesenvDesc = `${respostas.milestone}-desenv`;
-        const totalQADesc = `${respostas.milestone}-qa`;
-        const totalReworkDesc = `${respostas.milestone}-rework`;
+function main() {
+    prompt([
+        {
+            type: 'input',
+            name: 'milestone',
+            message: 'Qual a milestone deseja exportar?'
+        }
+    ]).then(async (respostas) => {
+        try {
+            if (!respostas.milestone) {
+                throw new Error('A não milestone estar vazia.');
+            }
 
-        console.log('\nExtraindo informações do Gitlab...');
+            const totalDesenvDesc = `${respostas.milestone}-desenv`;
+            const totalQADesc = `${respostas.milestone}-qa`;
+            const totalReworkDesc = `${respostas.milestone}-rework`;
 
-        const totalTimeDesenv = await getDados(process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc);
-        const totalTimeQA = await getDados(process.env.PATH_MR_MILESTONE + totalQADesc);
-        const totalTimeRework = await getDados(process.env.PATH_ISSUES_MILESTONE + totalReworkDesc);
-        const totalGeral = totalTimeDesenv + totalTimeQA + totalTimeRework;
+            console.log('\nExtraindo informações do Gitlab...');
 
-        const repostaMocha = {
-            sprint: respostas.milestone,
-            Milestones: [
-                {
-                    title: 'Desenvolvimento',
-                    value: totalTimeDesenv
-                },
-                {
-                    title: 'Testes',
-                    value: totalTimeQA
-                },
-                {
-                    title: 'Retrabalho',
-                    value: totalTimeRework
-                },
-                {
-                    title: 'Total',
-                    value: totalGeral
-                }
-            ]
-        };
+            const totalTimeDesenv = await getDados(
+                process.env.PATH_ISSUES_MILESTONE + totalDesenvDesc
+            );
+            const totalTimeQA = await getDados(process.env.PATH_MR_MILESTONE + totalQADesc);
+            const totalTimeRework = await getDados(
+                process.env.PATH_ISSUES_MILESTONE + totalReworkDesc
+            );
+            const totalGeral = totalTimeDesenv + totalTimeQA + totalTimeRework;
 
-        console.log('Informações extraídas.');
+            const repostaMocha = {
+                sprint: respostas.milestone,
+                Milestones: [
+                    {
+                        title: 'Desenvolvimento',
+                        value: totalTimeDesenv
+                    },
+                    {
+                        title: 'Testes',
+                        value: totalTimeQA
+                    },
+                    {
+                        title: 'Retrabalho',
+                        value: totalTimeRework
+                    },
+                    {
+                        title: 'Total',
+                        value: totalGeral
+                    }
+                ]
+            };
 
-        await excelManager(repostaMocha);
+            console.log('Informações extraídas.');
 
-        const mensagemConsole = {
-            desenvolvimento: `Total de tempo gasto com Desenvolvimento: ${totalTimeDesenv}h.`,
-            testes: `Total de tempo gasto com Testes: ${totalTimeQA}h.`,
-            retrabalho: `Total de tempo gasto com Retrabalho: ${totalTimeRework}h.`,
-            geral: `Total Geral: ${totalGeral}h`
-        };
+            await excelManager(repostaMocha);
 
-        const mensagemFormatada = `\n${mensagemConsole.desenvolvimento}\n${mensagemConsole.testes}\n${mensagemConsole.retrabalho}\n${mensagemConsole.geral}`;
+            const mensagemConsole = {
+                desenvolvimento: `Total de tempo gasto com Desenvolvimento: ${totalTimeDesenv}h.`,
+                testes: `Total de tempo gasto com Testes: ${totalTimeQA}h.`,
+                retrabalho: `Total de tempo gasto com Retrabalho: ${totalTimeRework}h.`,
+                geral: `Total Geral: ${totalGeral}h`
+            };
 
-        console.log(mensagemFormatada);
+            const mensagemFormatada = `\n${mensagemConsole.desenvolvimento}\n${mensagemConsole.testes}\n${mensagemConsole.retrabalho}\n${mensagemConsole.geral}`;
 
-        await enviarEmail(mensagemFormatada, respostas.milestone);
-    } catch (error) {
-        console.log(error.code);
-    }
-}).catch((err) => console.log(err));
+            console.log(mensagemFormatada);
+
+            await enviarEmail(mensagemFormatada, respostas.milestone);
+        } catch (ex) {
+            console.log(ex.message);
+            main();
+        }
+    }).catch((err) => console.log(err));
+}
+
+main();
